@@ -22,7 +22,7 @@
       overflow: hidden;
     }
     .blue {
-      color: #00aaff;
+      color: #0864fc;
     }
   </style>
 </head>
@@ -41,28 +41,30 @@
     let charIndex = 0;
     let isDeleting = false;
     const typingElement = document.getElementById("typing");
-    const typingSpeed = 100; 
-    const backspaceSpeed = 50; 
-    const pause = 1000; 
-    const clearPause = 300; // Pause after clearing text
+    const typingSpeed = 100;
+    const backspaceSpeed = 50;
+    const pause = 1000;
+    const clearPause = 300;
 
     function type() {
       const currentText = texts[index];
-      
-      if (!isDeleting) {
-        typingElement.innerHTML = currentText.slice(0, charIndex++);
-        if (charIndex > currentText.length) {
-          isDeleting = true;
-          setTimeout(type, pause);
+
+      if (isDeleting) {
+        typingElement.innerHTML = currentText.slice(0, charIndex--);
+        if (charIndex < 0) {
+          typingElement.innerHTML = "";  // Ensure text is cleared
+          isDeleting = false;
+          index = (index + 1) % texts.length;
+          setTimeout(type, clearPause);  // Add a short delay after clearing
           return;
         }
       } else {
-        typingElement.innerHTML = currentText.slice(0, charIndex--);
-        if (charIndex < 0) {
-          typingElement.innerHTML = ""; // Clear text before the next phrase
-          isDeleting = false;
-          index = (index + 1) % texts.length;
-          setTimeout(type, clearPause); // Short pause before typing new text
+        typingElement.innerHTML = currentText.slice(0, charIndex++);
+        if (charIndex > currentText.length) {
+          setTimeout(() => {
+            isDeleting = true;
+            type();
+          }, pause);  // Pause after finishing typing
           return;
         }
       }
