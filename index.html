@@ -52,12 +52,29 @@
 
     function type() {
       const currentMessage = messages[messageIndex];
-      const displayText = isDeleting
-        ? currentMessage.substring(0, charIndex - 1)
-        : currentMessage.substring(0, charIndex + 1);
+      let displayText = "";
+
+      if (!isDeleting) {
+        if (currentMessage[charIndex] === '<') {
+          const tagEnd = currentMessage.indexOf('>', charIndex);
+          displayText = currentMessage.substring(0, tagEnd + 1);
+          charIndex = tagEnd + 1;
+        } else {
+          displayText = currentMessage.substring(0, charIndex + 1);
+          charIndex++;
+        }
+      } else {
+        if (currentMessage[charIndex - 1] === '>') {
+          const tagStart = currentMessage.lastIndexOf('<', charIndex - 1);
+          displayText = currentMessage.substring(0, tagStart);
+          charIndex = tagStart;
+        } else {
+          displayText = currentMessage.substring(0, charIndex - 1);
+          charIndex--;
+        }
+      }
 
       typingText.innerHTML = displayText;
-      charIndex = isDeleting ? charIndex - 1 : charIndex + 1;
 
       if (!isDeleting && displayText === currentMessage) {
         isDeleting = true;
