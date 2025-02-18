@@ -41,12 +41,14 @@
     let charIndex = 0;
     let isDeleting = false;
     const typingElement = document.getElementById("typing");
-    const speed = 100; // typing speed in ms
-    const backspaceSpeed = 50; // backspace speed in ms
-    const pause = 1000; // pause after typing each text
+    const typingSpeed = 100; 
+    const backspaceSpeed = 50; 
+    const pause = 1000; 
+    const clearPause = 300; // Pause after clearing text
 
     function type() {
       const currentText = texts[index];
+      
       if (!isDeleting) {
         typingElement.innerHTML = currentText.slice(0, charIndex++);
         if (charIndex > currentText.length) {
@@ -57,11 +59,14 @@
       } else {
         typingElement.innerHTML = currentText.slice(0, charIndex--);
         if (charIndex < 0) {
+          typingElement.innerHTML = ""; // Clear text before the next phrase
           isDeleting = false;
           index = (index + 1) % texts.length;
+          setTimeout(type, clearPause); // Short pause before typing new text
+          return;
         }
       }
-      setTimeout(type, isDeleting ? backspaceSpeed : speed);
+      setTimeout(type, isDeleting ? backspaceSpeed : typingSpeed);
     }
 
     window.onload = type;
