@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Celestium</title>
+  <style>
+    body {
+      background-color: #000;
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-family: monospace;
+      font-size: 2em;
+    }
+    .text {
+      border-right: 2px solid #fff;
+      padding-right: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .blue {
+      color: #00aaff;
+    }
+  </style>
+</head>
+<body>
+  <div class="text" id="typing"></div>
+
+  <script>
+    const texts = [
+      "hello",
+      "this website is still in work",
+      "made by disbursing",
+      '<span class="blue">go visit datawave</span>'
+    ];
+
+    let index = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    const typingElement = document.getElementById("typing");
+    const speed = 100; // typing speed in ms
+    const backspaceSpeed = 50; // backspace speed in ms
+    const pause = 1000; // pause after typing each text
+
+    function type() {
+      const currentText = texts[index];
+      if (!isDeleting) {
+        typingElement.innerHTML = currentText.slice(0, charIndex++);
+        if (charIndex > currentText.length) {
+          isDeleting = true;
+          setTimeout(type, pause);
+          return;
+        }
+      } else {
+        typingElement.innerHTML = currentText.slice(0, charIndex--);
+        if (charIndex < 0) {
+          isDeleting = false;
+          index = (index + 1) % texts.length;
+        }
+      }
+      setTimeout(type, isDeleting ? backspaceSpeed : speed);
+    }
+
+    window.onload = type;
+  </script>
+</body>
+</html>
