@@ -1,77 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Celestium</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Animation</title>
   <style>
     body {
-      background-color: #000;
-      display: flex;
+      margin: 0;
+      padding: 0;
       height: 100vh;
+      display: flex;
       justify-content: center;
       align-items: center;
+      background-color: #1a1a1a;
       color: #fff;
-      font-family: monospace;
-      font-size: 2em;
+      font-family: 'Courier New', monospace;
+      font-size: 24px;
     }
-    .text {
-      border-right: 2px solid #fff;
-      padding-right: 5px;
+
+    #typing-text {
       white-space: nowrap;
       overflow: hidden;
+      border-right: 2px solid #fff;
+      animation: blink-caret 0.75s step-end infinite;
     }
-    .blue {
+
+    @keyframes blink-caret {
+      from, to { border-color: transparent; }
+      50% { border-color: #fff; }
+    }
+
+    .blue-text {
       color: #0864fc;
     }
   </style>
 </head>
 <body>
-  <div class="text" id="typing"></div>
+  <div id="typing-text"></div>
 
   <script>
-    const texts = [
+    const typingText = document.getElementById('typing-text');
+    const messages = [
       "hello",
-      "this website is still in work",
+      "website is still in progress",
       "made by disbursing",
-      '<span class="blue">go visit datawave</span>'
+      '<span class="blue-text">"visit datawave.wtf"</span>'
     ];
-
-    let index = 0;
+    let messageIndex = 0;
     let charIndex = 0;
     let isDeleting = false;
-    const typingElement = document.getElementById("typing");
-    const typingSpeed = 100;
-    const backspaceSpeed = 50;
-    const pause = 1000;
-    const clearPause = 300;
 
     function type() {
-      const currentText = texts[index];
+      const currentMessage = messages[messageIndex];
+      const displayText = isDeleting
+        ? currentMessage.substring(0, charIndex - 1)
+        : currentMessage.substring(0, charIndex + 1);
 
-      if (isDeleting) {
-        typingElement.innerHTML = currentText.slice(0, charIndex--);
-        if (charIndex < 0) {
-          typingElement.innerHTML = "";  // Ensure text is cleared
-          isDeleting = false;
-          index = (index + 1) % texts.length;
-          setTimeout(type, clearPause);  // Add a short delay after clearing
-          return;
-        }
+      typingText.innerHTML = displayText;
+      charIndex = isDeleting ? charIndex - 1 : charIndex + 1;
+
+      if (!isDeleting && displayText === currentMessage) {
+        isDeleting = true;
+        setTimeout(type, 1000); // Pause before deleting
+      } else if (isDeleting && displayText === "") {
+        isDeleting = false;
+        messageIndex = (messageIndex + 1) % messages.length;
+        setTimeout(type, 500); // Pause before typing next message
       } else {
-        typingElement.innerHTML = currentText.slice(0, charIndex++);
-        if (charIndex > currentText.length) {
-          setTimeout(() => {
-            isDeleting = true;
-            type();
-          }, pause);  // Pause after finishing typing
-          return;
-        }
+        setTimeout(type, isDeleting ? 50 : 100); // Typing/backspacing speed
       }
-      setTimeout(type, isDeleting ? backspaceSpeed : typingSpeed);
     }
 
-    window.onload = type;
+    type(); // Start the typing animation
   </script>
 </body>
 </html>
